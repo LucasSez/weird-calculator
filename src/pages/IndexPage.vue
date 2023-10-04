@@ -1,18 +1,31 @@
 <template>
   <q-page class="flex flex-center">
     <div class="col-6">
-      <q-input filled v-model="sum" readonly />
+      <q-btn-toggle
+        v-model="op" 
+        spread
+        toggle-color="primary" 
+        color="white"
+        text-color="black"
+        :options="[
+          { label: '+', value: '+' },
+          { label: '-', value: '-' }
+        ]"
+      />
+      <q-input 
+        filled 
+        v-model="sum" 
+        readonly 
+      />
       <q-btn-group>
-        <q-btn color="primary" label="0" :value="0" @click="addSum($event)" />
-        <q-btn color="primary" label="1" :value="1" @click="addSum($event)" />
-        <q-btn color="primary" label="2" :value="2" @click="addSum($event)" />
-        <q-btn color="primary" label="3" :value="3" @click="addSum($event)" />
-        <q-btn color="primary" label="4" :value="4" @click="addSum($event)" />
-        <q-btn color="primary" label="5" :value="5" @click="addSum($event)" />
-        <q-btn color="primary" label="6" :value="6" @click="addSum($event)" />
-        <q-btn color="primary" label="7" :value="7" @click="addSum($event)" />
-        <q-btn color="primary" label="8" :value="8" @click="addSum($event)" />
-        <q-btn color="primary" label="9" :value="9" @click="addSum($event)" />
+        <q-btn 
+          v-for="btn in btnTab" 
+          color="primary" 
+          :key="btn" 
+          :label=btn 
+          :value=btn 
+          @click="calc(btn)" 
+        />
       </q-btn-group>
     </div>
   </q-page>
@@ -25,12 +38,22 @@ export default defineComponent({
   name: 'IndexPage',
 
   setup () {
+    const tab = Array.from(Array(10).keys())
+    const operators = {
+      '+': function(a, b) { return a + b },
+      '-': function(a, b) { return a - b }
+    }
+
     var sum = ref(0);
+    var op = ref('+');
 
     return {
+      btnTab: tab,
+      opTab: operators,
+      op,
       sum,
-      addSum (e) {
-        sum.value += parseInt( e.currentTarget.getAttribute('value') );
+      calc (val) {
+        sum.value = operators[op.value](sum.value, val)
       }
     }
   }
